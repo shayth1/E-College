@@ -2,6 +2,10 @@
 define('TITLE', 'Edit User Profile');
 include '../assets/layouts/header.php';
 check_verified();
+if ($_SESSION['account'] != "admin"){
+    header("Location: ../logout");
+    exit();
+}
 if(isset($_GET['id'])){
     $userid = $_GET['id'];
 }else{

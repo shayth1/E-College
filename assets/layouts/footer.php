@@ -3,8 +3,8 @@
     <div class="container">
         <div class="footer-copyright">
             <p>
-                <a href="#">Created By Nedal Haneen Dana</a>
-                <a href="#">WISE 2021</a>
+                <a href="#">Created By IBB</a>
+                <a href="#">2021</a>
             </p>
         </div>
     </div>

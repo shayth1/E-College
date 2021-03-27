@@ -1,10 +1,14 @@
 <?php
- define('TITLE', "Manage Classes");
- include '../assets/layouts/header.php';
- if(! isset($_SESSION['auth'])){
-    header("Location: ../login"); 
+define('TITLE', "Manage Classes");
+include '../assets/layouts/header.php';
+if (!isset($_SESSION['auth'])) {
+    header("Location: ../login");
     exit();
-} 
+}
+if ($_SESSION['account'] != "admin") {
+    header("Location: ../logout");
+    exit();
+}
 $teacher = "teacher";
 $instractor = "SELECT * FROM users WHERE account_type = '$teacher'";
 $geTeacher = mysqli_query($conn, $instractor);
@@ -13,17 +17,17 @@ $teacher1 = "teacher";
 $instractor1 = "SELECT * FROM users WHERE account_type = '$teacher1'";
 $geTeacher1 = mysqli_query($conn, $instractor1);
 
- $maijor = "SELECT * FROM college";
- $getMaijor = mysqli_query($conn, $maijor);
+$maijor = "SELECT * FROM college";
+$getMaijor = mysqli_query($conn, $maijor);
 
- $maijor1 = "SELECT * FROM college";
- $getMaijor1 = mysqli_query($conn, $maijor1);
+$maijor1 = "SELECT * FROM college";
+$getMaijor1 = mysqli_query($conn, $maijor1);
 
- $subject = "SELECT * FROM subject";
- $getSubject = mysqli_query($conn, $subject);
+$subject = "SELECT * FROM subject";
+$getSubject = mysqli_query($conn, $subject);
 
- $subject1 = "SELECT * FROM subject";
- $getSubject1 = mysqli_query($conn, $subject1);
+$subject1 = "SELECT * FROM subject";
+$getSubject1 = mysqli_query($conn, $subject1);
 ?>
 
 <div class="container">
@@ -67,28 +71,28 @@ $geTeacher1 = mysqli_query($conn, $instractor1);
                             </thead>
                             <tbody>
                                 <?php
-                                         $sql = "SELECT classes.class_id AS 'class_id', classes.class_subject AS 'class_subject', classes.class_status AS 'class_status', classes.class_college 
+                                $sql = "SELECT classes.class_id AS 'class_id', classes.class_subject AS 'class_subject', classes.class_status AS 'class_status', classes.class_college 
                                          AS 'class_college', users.first_name AS 'class_teacherf', users.last_name AS 'class_teacherl', classes.class_code AS
                                           'class_code' FROM classes INNER JOIN users ON classes.class_teacher = users.id";
-                                         $stmt =mysqli_stmt_init($conn);
-                                         if(!mysqli_stmt_prepare($stmt, $sql)){
-                                             die('ERROR IN DATABASE');
-                                         }else{ 
-                                             mysqli_stmt_execute($stmt);
-                                             $result = mysqli_stmt_get_result($stmt);
-                                             while($row = mysqli_fetch_assoc($result)){
-                                                 echo'
+                                $stmt = mysqli_stmt_init($conn);
+                                if (!mysqli_stmt_prepare($stmt, $sql)) {
+                                    die('ERROR IN DATABASE');
+                                } else {
+                                    mysqli_stmt_execute($stmt);
+                                    $result = mysqli_stmt_get_result($stmt);
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        echo '
                                                 <tr>
-                                                    <td>'.$row['class_id'].'</td>
-                                                    <td>'.$row['class_subject'].'</td> 
-                                                    <td>'.$row['class_college'].'</td>
-                                                    <td>'.$row['class_teacherf'].' '.$row['class_teacherl'].'</td>
-                                                    <td>'.$row['class_code'].'</td>
-                                                    <td>'.$row['class_status'].'</td>
+                                                    <td>' . $row['class_id'] . '</td>
+                                                    <td>' . $row['class_subject'] . '</td> 
+                                                    <td>' . $row['class_college'] . '</td>
+                                                    <td>' . $row['class_teacherf'] . ' ' . $row['class_teacherl'] . '</td>
+                                                    <td>' . $row['class_code'] . '</td>
+                                                    <td>' . $row['class_status'] . '</td>
                                                 </tr>';
-                                             }
-                                            }
-                                            ?>
+                                    }
+                                }
+                                ?>
 
                             </tbody>
                         </table>
@@ -120,28 +124,29 @@ $geTeacher1 = mysqli_query($conn, $instractor1);
                                 <label for="teacher">Select Teacher Name</label>
                                 <select id="teacher" name="teacher" class="form-control" required>
                                     </option>
-                                    <?php while ($row = mysqli_fetch_array($geTeacher)):?>
-                                    <option value="<?php echo $row[0];?>"><?php echo $row[4];?> <?php echo $row[5];?>
+                                    <?php while ($row = mysqli_fetch_array($geTeacher)) : ?>
+                                    <option value="<?php echo $row[0]; ?>"><?php echo $row[4]; ?> <?php echo $row[5]; ?>
                                     </option>
-                                    <?php endwhile;?>
+                                    <?php endwhile; ?>
                                 </select>
                                 <br>
                                 <label for="college">Select College</label>
                                 <select id="college" name="college" class="form-control" required>
                                     </option>
-                                    <?php while ($row = mysqli_fetch_array($getMaijor)):?>
-                                    <option value="<?php echo $row[1];?>"><?php echo $row[1];?>
+                                    <?php while ($row = mysqli_fetch_array($getMaijor)) : ?>
+                                    <option value="<?php echo $row[1]; ?>"><?php echo $row[1]; ?>
                                     </option>
-                                    <?php endwhile;?>
+                                    <?php endwhile; ?>
+                                    <option value="global">Global</option>
                                 </select>
                                 <br>
                                 <label for="subject">Select Subject</label>
                                 <select id="subject" name="subject" class="form-control" required>
                                     </option>
-                                    <?php while ($row = mysqli_fetch_array($getSubject)):?>
-                                    <option value="<?php echo $row[1];?>"><?php echo $row[1];?>
+                                    <?php while ($row = mysqli_fetch_array($getSubject)) : ?>
+                                    <option value="<?php echo $row[1]; ?>"><?php echo $row[1]; ?>
                                     </option>
-                                    <?php endwhile;?>
+                                    <?php endwhile; ?>
                                 </select>
                             </div>
                             <div class="modal-footer">
@@ -179,28 +184,30 @@ $geTeacher1 = mysqli_query($conn, $instractor1);
                         <label for="teachere">Select Teacher Name</label>
                         <select id="teachere" name="teachere" class="form-control" required>
                             </option>
-                            <?php while ($row = mysqli_fetch_array($geTeacher1)):?>
-                            <option value="<?php echo $row[0];?>"><?php echo $row[4];?> <?php echo $row[5];?>
+                            <?php while ($row = mysqli_fetch_array($geTeacher1)) : ?>
+                            <option value="<?php echo $row[0]; ?>"><?php echo $row[4]; ?> <?php echo $row[5]; ?>
                             </option>
-                            <?php endwhile;?>
+                            <?php endwhile; ?>
                         </select>
                         <br>
                         <label for="college">Select College</label>
+
                         <select id="college" name="collegee" class="form-control" required>
                             </option>
-                            <?php while ($row = mysqli_fetch_array($getMaijor1)):?>
-                            <option value="<?php echo $row[1];?>"><?php echo $row[1];?>
+                            <?php while ($row = mysqli_fetch_array($getMaijor1)) : ?>
+                            <option value="<?php echo $row[1]; ?>"><?php echo $row[1]; ?>
                             </option>
-                            <?php endwhile;?>
+                            <?php endwhile; ?>
+                            <option value="global">Global</option>
                         </select>
                         <br>
                         <label for="subject">Select Subject</label>
                         <select id="subject" name="subjecte" class="form-control" required>
                             </option>
-                            <?php while ($row = mysqli_fetch_array($getSubject1)):?>
-                            <option value="<?php echo $row[1];?>"><?php echo $row[1];?>
+                            <?php while ($row = mysqli_fetch_array($getSubject1)) : ?>
+                            <option value="<?php echo $row[1]; ?>"><?php echo $row[1]; ?>
                             </option>
-                            <?php endwhile;?>
+                            <?php endwhile; ?>
                         </select>
                     </div>
                     <br>

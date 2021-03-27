@@ -5,6 +5,10 @@
     header("Location: ../login");
     exit();
 } 
+if ($_SESSION['account'] != "admin"){
+    header("Location: ../logout");
+    exit();
+}
 $college = "SELECT * FROM college";
  $getCollege = mysqli_query($conn, $college);
 

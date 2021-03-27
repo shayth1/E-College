@@ -1,21 +1,21 @@
 <?php
- define('TITLE', "Users");
- include '../assets/layouts/header.php';
- if(! isset($_SESSION['auth'])){
+define('TITLE', "Users");
+include '../assets/layouts/header.php';
+if (!isset($_SESSION['auth'])) {
     header("Location: ../login");
     exit();
 }
 
-if ($_SESSION['account'] != "admin"){
+if ($_SESSION['account'] != "admin") {
     header("Location: ../logout");
     exit();
 }
- check_verified();
- $college = "SELECT * FROM college";
- $getCollege = mysqli_query($conn, $college);
+check_verified();
+$college = "SELECT * FROM college";
+$getCollege = mysqli_query($conn, $college);
 
- $maijor = "SELECT * FROM maijor";
- $getMaijor = mysqli_query($conn, $maijor);
+$maijor = "SELECT * FROM maijor";
+$getMaijor = mysqli_query($conn, $maijor);
 ?>
 
 
@@ -52,29 +52,35 @@ if ($_SESSION['account'] != "admin"){
                                         </thead>
                                         <tbody>
                                             <?php
-                                         $sql = "SELECT * FROM users";
-                                         $stmt =mysqli_stmt_init($conn);
-                                         if(!mysqli_stmt_prepare($stmt, $sql)){
-                                             die('ERROR IN DATABASE');
-                                         }else{ 
-                                             mysqli_stmt_execute($stmt);
-                                             $result = mysqli_stmt_get_result($stmt);
-                                             while($row = mysqli_fetch_assoc($result)){
-                                                 echo'
+                                            $sql = "SELECT * FROM users";
+                                            $stmt = mysqli_stmt_init($conn);
+                                            if (!mysqli_stmt_prepare($stmt, $sql)) {
+                                                die('ERROR IN DATABASE');
+                                            } else {
+                                                mysqli_stmt_execute($stmt);
+                                                $result = mysqli_stmt_get_result($stmt);
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    echo '
                                                  <tr>
-                                                 <td class="text-nowrap align-middle">'.$row['uniid'].'</td>
+                                                 <td class="text-nowrap align-middle">' . $row['uniid'] . '</td>
                                                  <td class="align-middle text-center">
                                                      <div class="bg-light d-inline-flex justify-content-center align-items-center align-top"
                                                          >
-                                                         <img src="../assets/uploads/users/'.$row['profile_image'].'" style="width: 35px; height: 35px; border-radius: 3px;">
+                                                         <img src="../assets/uploads/users/' . $row['profile_image'] . '" style="width: 35px; height: 35px; border-radius: 3px;">
                                                      </div>
                                                  </td>
-                                                 <td class="text-nowrap align-middle">'.$row['first_name'].' '.$row['last_name'].'</td>
-                                                 <td class="text-nowrap align-middle"><span>'; if ($row['account_type'] == NULL){echo'Student';}else{echo $row['account_type'];} echo'</span></td>
-                                                 <td class="text-center align-middle">'.$row['phone'].' </td>
+                                                 <td class="text-nowrap align-middle">' . $row['first_name'] . ' ' . $row['last_name'] . '</td>
+                                                 <td class="text-nowrap align-middle"><span>';
+                                                    if ($row['account_type'] == NULL) {
+                                                        echo 'Student';
+                                                    } else {
+                                                        echo $row['account_type'];
+                                                    }
+                                                    echo '</span></td>
+                                                 <td class="text-center align-middle">' . $row['phone'] . ' </td>
                                                  <td class="text-center align-middle">
                                                      <div class="btn-group align-top">
-                                                         <a href="editUserProfile.php?id='.$row['id'].'" type="button" class="btn btn-sm btn-outline-warning badge">Edit</a>
+                                                         <a href="editUserProfile.php?id=' . $row['id'] . '" type="button" class="btn btn-sm btn-outline-warning badge">Edit</a>
                                                             
                                                          <button class="btn btn-sm btn-outline-danger badge"
                                                              type="button" data-toggle="modal" data-target="#du"><i class="fa fa-trash"></i></button>
@@ -82,9 +88,9 @@ if ($_SESSION['account'] != "admin"){
                                                  </td>
                                              </tr>
                                                  ';
-                                             }
-                                         }
-                                        ?>
+                                                }
+                                            }
+                                            ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -104,37 +110,40 @@ if ($_SESSION['account'] != "admin"){
                                 <ul class="nav">
                                     <li class="nav-item active"><a href="" class="nav-link"><span>Total
                                                 Students</span>&nbsp;<small>/&nbsp;
-                                                <?php 
-                                                    $student = "student";
-                                                    $query = mysqli_query($conn,"SELECT COUNT(*) as 'countS' FROM users WHERE account_type ='$student'");
-                                                    $row = mysqli_fetch_array($query);
-                                                    echo $row['countS'];
+                                                <?php
+                                                $student = "student";
+                                                $query = mysqli_query($conn, "SELECT COUNT(*) as 'countS' FROM users WHERE account_type ='$student'");
+                                                $row = mysqli_fetch_array($query);
+                                                echo $row['countS'];
 
-                                            ?>
+                                                ?>
                                             </small></a></li>
                                     <li class="nav-item"><a href="" class="nav-link"><span>Total
-                                                Teachers</span>&nbsp;<small>/&nbsp; <?php 
-                                                    $teacher = "teacher";
-                                                    $query = mysqli_query($conn,"SELECT COUNT(*) as 'countS' FROM users WHERE account_type ='$teacher'");
-                                                    $row = mysqli_fetch_array($query);
-                                                    echo $row['countS'];
+                                                Teachers</span>&nbsp;<small>/&nbsp; <?php
+                                                                                    $teacher = "teacher";
+                                                                                    $query = mysqli_query($conn, "SELECT COUNT(*) as 'countS' FROM users WHERE account_type ='$teacher'");
+                                                                                    $row = mysqli_fetch_array($query);
+                                                                                    echo $row['countS'];
 
-                                            ?></small></a></li>
+                                                                                    ?></small></a></li>
                                     <li class="nav-item"><a href="" class="nav-link"><span>Total
-                                                Admins</span>&nbsp;<small>/&nbsp;<?php 
-                                                    $admin = "admin";
-                                                    $query = mysqli_query($conn,"SELECT COUNT(*) as 'countS' FROM users WHERE account_type ='$admin'");
-                                                    $row = mysqli_fetch_array($query);
-                                                    echo $row['countS'];
+                                                Admins</span>&nbsp;<small>/&nbsp;<?php
+                                                                                    $admin = "admin";
+                                                                                    $query = mysqli_query($conn, "SELECT COUNT(*) as 'countS' FROM users WHERE account_type ='$admin'");
+                                                                                    $row = mysqli_fetch_array($query);
+                                                                                    echo $row['countS'];
 
-                                            ?></small></a></li>
+                                                                                    ?></small></a></li>
                                 </ul>
                             </div>
                             <hr class="my-3">
                             <div>
-                                <div class="form-group">
-                                    <label>Search by Name:</label>
-                                    <div><input class="form-control w-100" type="text" placeholder="Name" value="">
+                                <div class="search-box header-search-form search-box">
+                                    <input type="text" class=" search-box mainMenuediv form-control" autocomplete="off"
+                                        placeholder="search by uni id" />
+
+                                    <div class="result" style="background-color: #eee;">
+
                                     </div>
                                 </div>
                             </div>
@@ -210,10 +219,11 @@ if ($_SESSION['account'] != "admin"){
                                                         <label>College</label>
                                                         <select name="college" class="form-control" required>
                                                             <option value="">Select College</option>
-                                                            <?php while ($row = mysqli_fetch_array($getCollege)):?>
-                                                            <option value="<?php echo $row[1];?>"><?php echo $row[1];?>
+                                                            <?php while ($row = mysqli_fetch_array($getCollege)) : ?>
+                                                            <option value="<?php echo $row[1]; ?>">
+                                                                <?php echo $row[1]; ?>
                                                             </option>
-                                                            <?php endwhile;?>
+                                                            <?php endwhile; ?>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -223,10 +233,11 @@ if ($_SESSION['account'] != "admin"){
                                                         <label>Maijor</label>
                                                         <select name="maijor" class="form-control" required>
                                                             <option value="">Select Maijor</option>
-                                                            <?php while ($row = mysqli_fetch_array($getMaijor)):?>
-                                                            <option value="<?php echo $row[1];?>"><?php echo $row[1];?>
+                                                            <?php while ($row = mysqli_fetch_array($getMaijor)) : ?>
+                                                            <option value="<?php echo $row[1]; ?>">
+                                                                <?php echo $row[1]; ?>
                                                             </option>
-                                                            <?php endwhile;?>
+                                                            <?php endwhile; ?>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -303,3 +314,28 @@ if ($_SESSION['account'] != "admin"){
 </div>
 
 <?php include '../assets/layouts/footer.php'; ?>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.search-box input[type="text"]').on("keyup input", function() {
+
+        var inputVal = $(this).val();
+        var resultDropdown = $(this).siblings(".result");
+        if (inputVal.length) {
+            $.get("search.php", {
+                term: inputVal
+            }).done(function(data) {
+
+                resultDropdown.html(data);
+            });
+        } else {
+            resultDropdown.empty();
+        }
+    });
+
+
+    $(document).on("click", ".result p", function() {
+        $(this).parents(".search-box").find('input[type="text"]').val($(this).text());
+        $(this).parent(".result").empty();
+    });
+});
+</script>

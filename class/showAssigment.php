@@ -2,16 +2,16 @@
 define('TITLE', 'Show Class');
 include '../assets/layouts/header.php';
 check_verified();
-if(isset($_GET['id'])){
+if (isset($_GET['id'])) {
     $id = $_GET['id'];
-}else{
+} else {
     header("Location: classes.php");
 }
 $sql = "SELECT * FROM assigment WHERE ass_id ='$id'";
 $stmt = mysqli_stmt_init($conn);
-if(!mysqli_stmt_prepare($stmt, $sql)){
+if (!mysqli_stmt_prepare($stmt, $sql)) {
     die('SQL ERROR');
-}else{
+} else {
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $ass = mysqli_fetch_assoc($result);
@@ -42,7 +42,8 @@ if(!mysqli_stmt_prepare($stmt, $sql)){
                             Instruction's
                         </h5>
                         <div class="card-body">
-                            <p class="ng-scope ng-binding editable"><?php echo $ass['ass_about']; ?></p>
+                            <p class="ng-scope ng-binding editable"><?php echo $ass['ass_about']; ?> | this assigment
+                                will close at <?php echo $ass['due_date']; ?> <?php echo $ass['due_time']; ?></p>
                         </div>
                         <div class="card-divider"></div>
 
@@ -63,32 +64,27 @@ if(!mysqli_stmt_prepare($stmt, $sql)){
                                 </thead>
                                 <tbody>
                                     <?php
-                        $assN = $ass['ass_id'];
-                        $query = "SELECT * FROM meterials WHERE ass_id = '$assN'";
-                        $stmt = mysqli_stmt_init($conn);    
-								if (!mysqli_stmt_prepare($stmt, $query))
-								{
-									die('SQL error');
-								}
-								else
-								{
-									mysqli_stmt_execute($stmt);
-									$result = mysqli_stmt_get_result($stmt);
-									
-									while ($row = mysqli_fetch_assoc($result))
-									{ 
-										echo'
+                                    $assN = $ass['ass_id'];
+                                    $query = "SELECT * FROM meterials WHERE ass_id = '$assN'";
+                                    $stmt = mysqli_stmt_init($conn);
+                                    if (!mysqli_stmt_prepare($stmt, $query)) {
+                                        die('SQL error');
+                                    } else {
+                                        mysqli_stmt_execute($stmt);
+                                        $result = mysqli_stmt_get_result($stmt);
+
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            echo '
 
                                     <tr>
-                                        <td><em class="ion-document-text icon-fw mr">'.$row['meterialid'].'</td> 
-                                        <td class="ng-binding"><a href="../teacher/uploads/files/'.$row['meterialName'].'" type="button" class="btn btn-sm btn-outline-success badge" target="_blank">Download</a></td>
-                                        <td><em class="ion-document-text icon-fw mr">'.$row['upTime'].'</td>
-                                        <td><em class="ion-document-text icon-fw mr">'.$row['caption'].'</td>
-
+                                        <td><em class="ion-document-text icon-fw mr">' . $row['meterialid'] . '</td> 
+                                        <td class="ng-binding"><a href="../teacher/uploads/files/' . $row['meterialName'] . '" type="button" class="btn btn-sm btn-outline-success badge" target="_blank">Download</a></td>
+                                        <td><em class="ion-document-text icon-fw mr">' . $row['upTime'] . '</td>
+                                        <td><em class="ion-document-text icon-fw mr">' . $row['caption'] . '</td>
                                     </tr>';
+                                        }
                                     }
-                                }
-                                ?>
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -112,32 +108,29 @@ if(!mysqli_stmt_prepare($stmt, $sql)){
                                     </thead>
                                     <tbody>
                                         <?php
-                        $assN = $ass['ass_id'];
-                        $std = $_SESSION['id'];
-                        $query = "SELECT * FROM submission WHERE as_id = '$assN' AND sub_by = $std";
-                        $stmt = mysqli_stmt_init($conn);    
-								if (!mysqli_stmt_prepare($stmt, $query))
-								{
-									die('SQL error');
-								}
-								else
-								{
-									mysqli_stmt_execute($stmt);
-									$result = mysqli_stmt_get_result($stmt);
-									
-									while ($row = mysqli_fetch_assoc($result))
-									{ 
-										echo'
+                                        $assN = $ass['ass_id'];
+                                        $std = $_SESSION['id'];
+                                        $query = "SELECT * FROM submission WHERE as_id = '$assN' AND sub_by = $std";
+                                        $stmt = mysqli_stmt_init($conn);
+                                        if (!mysqli_stmt_prepare($stmt, $query)) {
+                                            die('SQL error');
+                                        } else {
+                                            mysqli_stmt_execute($stmt);
+                                            $result = mysqli_stmt_get_result($stmt);
+
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                echo '
 
                                     <tr>
-                                        <td><em class="ion-document-text icon-fw mr">'.$row['sub_at'].'</td> 
-                                        <td class="ng-binding"><a href="../teacher/uploads/files/'.$row['sub_file'].'" type="button" class="btn btn-sm btn-outline-success badge" target="_blank">Show</a></td>
-                                        
-
+                                        <td><em class="ion-document-text icon-fw mr">' . $row['sub_at'] . '</td> 
+                                        <td class="ng-binding">
+                                        <a href="../teacher/uploads/files/' . $row['sub_file'] . '" type="button" class="btn btn-sm btn-outline-success badge" target="_blank">Show</a>
+                                        <a href="api/deleteAss.inc.php?aid=' . $row['sub_id'] . '&ass=' . $assN . '" class="text-danger"><i class="far fa-trash-alt"></i></a>
+                                        </td>
                                     </tr>';
-                                    }
-                                }
-                                ?>
+                                            }
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -145,9 +138,27 @@ if(!mysqli_stmt_prepare($stmt, $sql)){
 
                     </div>
                     <div class="card-body pv0 text-right">
-                        <a data-toggle="modal" data-target="#up" class="btn btn-flat btn-info"
+                        <?php
+                        $due = $ass['due_date'];
+                        $duem = $ass['due_time'];
+                        $time = date('Y-m-d');
+                        $min = date('H:i');
+
+                        if ($time  > $due && $min > $duem || $time  === $due && $min > $duem) {
+                            echo '
+                            <a  class="btn btn-flat btn-danger"
+                            style="color: #ffffff;">This Submission has been closed
+                        </a>
+                            ';
+                        } else {
+                            echo '<a data-toggle="modal" data-target="#up" class="btn btn-flat btn-info"
                             style="color: #ffffff;">add
-                            submission</a>
+                            submission
+                        </a>';
+                        }
+
+
+                        ?>
                     </div>
                     <div class="card-divider"></div>
                 </div>
