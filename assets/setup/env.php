@@ -18,4 +18,4 @@ if (!defined('MAIL_USERNAME'))                  define('MAIL_USERNAME', 'PUT YOU
 if (!defined('MAIL_PASSWORD'))                  define('MAIL_PASSWORD', 'PASSWORD');
 if (!defined('MAIL_ENCRYPTION'))                define('MAIL_ENCRYPTION', 'tls');
 if (!defined('MAIL_PORT'))                      define('MAIL_PORT', 587);
-//auto sending email
+//auto sending email 
